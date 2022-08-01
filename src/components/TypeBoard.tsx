@@ -5,6 +5,7 @@ type TypeBoardProps = {
   enabled?: boolean
   onCompleteCorrectly?: (userText: string) => any
   onEnterWrong?: (userText: string) => any
+  onReset?: (userText: string) => any
 }
 
 const invalidKeys = new Set([
@@ -55,7 +56,6 @@ function TypeBoard({
     if (
       currentWords[lastComparableWordIndex] !== words[lastComparableWordIndex]
     ) {
-      setUserText('')
       onEnterWrong(userText)
     } else if (currentUserText === sentence + ' ') {
       setUserText('')
@@ -66,7 +66,7 @@ function TypeBoard({
   const handleUserTextKeyUp = (event: React.KeyboardEvent) => {
     if (resetKeys.has(event.code)) {
       setUserText('')
-      onEnterWrong(userText)
+      onReset(userText)
     }
   }
 
