@@ -69,6 +69,11 @@ function TypeBoard({
     }
   }
 
+  const handleUserTextClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    const length = event.currentTarget.value.length
+    event.currentTarget.setSelectionRange(length, length)
+  }
+
   return (
     <div>
       <div>{sentence}</div>
@@ -79,6 +84,7 @@ function TypeBoard({
         onInput={handleUserTextInput}
         onKeyDown={handleUserTextKeyDown}
         onKeyUp={handleUserTextKeyUp}
+        onClick={handleUserTextClick}
       />
     </div>
   )
