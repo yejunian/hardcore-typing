@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 
 type TypeBoardProps = {
   sentence: string
+  enabled?: boolean
   onCompleteCorrectly?: (userText: string) => any
   onEnterWrong?: (userText: string) => any
 }
@@ -27,13 +28,19 @@ const resetKeys = new Set([
 
 function TypeBoard({
   sentence,
+  enabled = true,
   onCompleteCorrectly = () => {},
   onEnterWrong = () => {},
+  onReset = () => {},
 }: TypeBoardProps) {
   const [userText, setUserText] = useState('')
   const words = useMemo(() => sentence.split(' '), [sentence])
 
   const handleUserTextInput = (event: React.FormEvent<HTMLInputElement>) => {
+    if (!enabled) {
+      return
+    }
+
     const currentUserText = event.currentTarget.value
 
     const currentWords = currentUserText.split(' ')
