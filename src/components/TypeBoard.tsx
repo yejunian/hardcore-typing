@@ -6,6 +6,25 @@ type TypeBoardProps = {
   onEnterWrong?: (userText: string) => any
 }
 
+const invalidKeys = new Set([
+  'Backspace',
+  'Tab',
+  'Insert',
+  'Delete',
+  'Home',
+  'End',
+  'PageUp',
+  'PageDown',
+  'ArrowUp',
+  'ArrowRight',
+  'ArrowDown',
+  'ArrowLeft',
+])
+
+const resetKeys = new Set([
+  'Escape',
+])
+
 function TypeBoard({
   sentence,
   onCompleteCorrectly = () => {},
@@ -37,6 +56,19 @@ function TypeBoard({
     }
   }
 
+  const handleUserTextKeyUp = (event: React.KeyboardEvent) => {
+    if (resetKeys.has(event.code)) {
+      setUserText('')
+      onEnterWrong(userText)
+    }
+  }
+
+  const handleUserTextKeyDown = (event: React.KeyboardEvent) => {
+    if (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey) {
+      event.preventDefault()
+    }
+  }
+
   return (
     <div>
       <div>{sentence}</div>
@@ -45,6 +77,8 @@ function TypeBoard({
         autoFocus
         value={userText}
         onInput={handleUserTextInput}
+        onKeyDown={handleUserTextKeyDown}
+        onKeyUp={handleUserTextKeyUp}
       />
     </div>
   )
