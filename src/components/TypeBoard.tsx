@@ -50,6 +50,10 @@ function TypeBoard({
 
     const currentUserText = event.currentTarget.value
 
+    if (currentUserText === ' ') {
+      return
+    }
+
     const currentWords = currentUserText.split(' ')
     const lastComparableWordIndex = currentWords.length - 2
 
