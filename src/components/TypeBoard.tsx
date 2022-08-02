@@ -3,8 +3,8 @@ import React, { useMemo, useState } from 'react'
 type TypeBoardProps = {
   sentence: string
   enabled?: boolean
-  onCompleteCorrectly?: (userText: string) => any
-  onEnterWrong?: (userText: string) => any
+  onSucceed?: (userText: string) => any
+  onFail?: (userText: string) => any
   onReset?: (userText: string) => any
 }
 
@@ -30,8 +30,8 @@ const resetKeys = new Set([
 function TypeBoard({
   sentence,
   enabled = true,
-  onCompleteCorrectly = () => {},
-  onEnterWrong = () => {},
+  onSucceed = () => {},
+  onFail = () => {},
   onReset = () => {},
 }: TypeBoardProps) {
   const [userText, setUserText] = useState('')
@@ -56,10 +56,10 @@ function TypeBoard({
     if (
       currentWords[lastComparableWordIndex] !== words[lastComparableWordIndex]
     ) {
-      onEnterWrong(userText)
+      onFail(userText)
     } else if (currentUserText === sentence + ' ') {
       setUserText('')
-      onCompleteCorrectly(userText)
+      onSucceed(userText)
     }
   }
 
