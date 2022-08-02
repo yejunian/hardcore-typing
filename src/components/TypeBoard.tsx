@@ -76,7 +76,7 @@ function TypeBoard({
   }
 
   const handleUserTextKeyUp = (event: React.KeyboardEvent) => {
-    if (resetKeys.has(event.code)) {
+    if (typable && resetKeys.has(event.code)) {
       setUserText('')
       setLocked(false)
       onReset(userText)
@@ -84,7 +84,10 @@ function TypeBoard({
   }
 
   const handleUserTextKeyDown = (event: React.KeyboardEvent) => {
-    if (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey) {
+    if (
+      typable &&
+      (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey)
+    ) {
       event.preventDefault()
     }
   }
