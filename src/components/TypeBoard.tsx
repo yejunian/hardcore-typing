@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 
 import invalidKeys from '../core/keys/invalidKeys'
 import resetKeys from '../core/keys/resetKeys'
+import zeroStrokeKeys from '../core/keys/zeroStrokeKeys'
 
 type TypeBoardProps = {
   sentence: string
@@ -10,6 +11,7 @@ type TypeBoardProps = {
   onSucceed?: (userText: string) => any
   onFail?: (userText: string) => any
   onReset?: (userText: string) => any
+  onType?: (code: string) => any
 }
 
 function TypeBoard({
@@ -19,6 +21,7 @@ function TypeBoard({
   onSucceed = () => {},
   onFail = () => {},
   onReset = () => {},
+  onType = () => {},
 }: TypeBoardProps) {
   const [locked, setLocked] = useState(false)
   const [userText, setUserText] = useState('')
@@ -72,11 +75,14 @@ function TypeBoard({
   }
 
   const handleUserTextKeyDown = (event: React.KeyboardEvent) => {
-    if (
-      typable &&
-      (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey)
-    ) {
-      event.preventDefault()
+    if (typable) {
+      if (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey) {
+        event.preventDefault()
+      }
+
+      if (!zeroStrokeKeys.has(event.code)) {
+        onType(event.code)
+      }
     }
   }
 
