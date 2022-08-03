@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from 'react'
 
+import invalidKeys from '../core/keys/invalidKeys'
+import resetKeys from '../core/keys/resetKeys'
+
 type TypeBoardProps = {
   sentence: string
   enabled?: boolean
@@ -8,25 +11,6 @@ type TypeBoardProps = {
   onFail?: (userText: string) => any
   onReset?: (userText: string) => any
 }
-
-const invalidKeys = new Set([
-  'Backspace',
-  'Tab',
-  'Insert',
-  'Delete',
-  'Home',
-  'End',
-  'PageUp',
-  'PageDown',
-  'ArrowUp',
-  'ArrowRight',
-  'ArrowDown',
-  'ArrowLeft',
-])
-
-const resetKeys = new Set([
-  'Escape',
-])
 
 function TypeBoard({
   sentence,
