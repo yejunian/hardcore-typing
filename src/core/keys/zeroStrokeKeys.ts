@@ -14,6 +14,8 @@ const zeroStrokeKeys = new Set([
   'Enter',
   'MetaLeft',
   'MetaRight',
+  'ShiftLeft',
+  'ShiftRight',
   'Tab',
 
   'Convert',
