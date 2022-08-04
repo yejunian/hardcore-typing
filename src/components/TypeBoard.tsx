@@ -4,14 +4,21 @@ import invalidKeys from '../core/keys/invalidKeys'
 import resetKeys from '../core/keys/resetKeys'
 import zeroStrokeKeys from '../core/keys/zeroStrokeKeys'
 
+export type TypingResult = {
+  state: 'succeed' | 'fail' | 'reset' | 'type'
+  userText: string
+  strokeCount: number
+  duration: number
+}
+
 type TypeBoardProps = {
   sentence: string
   enabled?: boolean
   lockTimeAfterFail?: number
-  onSucceed?: (userText: string) => any
-  onFail?: (userText: string) => any
-  onReset?: (userText: string) => any
-  onType?: (code: string) => any
+  onSucceed?: (result: TypingResult) => any
+  onFail?: (result: TypingResult) => any
+  onReset?: (result: TypingResult) => any
+  onUpdate?: (result: TypingResult) => any
 }
 
 function TypeBoard({
@@ -21,10 +28,12 @@ function TypeBoard({
   onSucceed = () => {},
   onFail = () => {},
   onReset = () => {},
-  onType = () => {},
+  onUpdate = () => {},
 }: TypeBoardProps) {
   const [locked, setLocked] = useState(false)
   const [userText, setUserText] = useState('')
+  const [beginningTime, setBeginningTime] = useState(Date.now())
+  const [strokeCount, setStrokeCount] = useState(0)
 
   const words = useMemo(() => sentence.split(' '), [sentence])
 
@@ -46,6 +55,13 @@ function TypeBoard({
 
     setUserText(currentUserText)
 
+    onUpdate({
+      strokeCount,
+      state: 'type',
+      userText: currentUserText,
+      duration: Date.now() - beginningTime,
+    })
+
     if (lastComparableWordIndex < 0) {
       return
     }
@@ -55,14 +71,24 @@ function TypeBoard({
 
     if (enteredWord !== expectedWord) {
       setLocked(true)
-      onFail(userText)
+      onFail({
+        strokeCount,
+        state: 'fail',
+        userText: currentUserText,
+        duration: Date.now() - beginningTime,
+      })
       window.setTimeout(() => {
         setUserText('')
         setLocked(false)
       }, lockTimeAfterFail)
     } else if (currentUserText === sentence + ' ') {
       setUserText('')
-      onSucceed(userText)
+      onSucceed({
+        strokeCount,
+        state: 'succeed',
+        userText: currentUserText,
+        duration: Date.now() - beginningTime,
+      })
     }
   }
 
@@ -70,18 +96,30 @@ function TypeBoard({
     if (typable && resetKeys.has(event.code)) {
       setUserText('')
       setLocked(false)
-      onReset(userText)
+      onReset({
+        userText,
+        strokeCount,
+        state: 'reset',
+        duration: Date.now() - beginningTime,
+      })
     }
   }
 
-  const handleUserTextKeyDown = (event: React.KeyboardEvent) => {
+  const handleUserTextKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     if (typable) {
+      if (userText === '' && event.target.value === '') {
+        setBeginningTime(Date.now())
+        setStrokeCount(0)
+      }
+
       if (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey) {
         event.preventDefault()
       }
 
       if (!zeroStrokeKeys.has(event.code)) {
-        onType(event.code)
+        setStrokeCount((v) => v + 1)
       }
     }
   }
