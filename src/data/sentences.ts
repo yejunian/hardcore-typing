@@ -1,8 +1,8 @@
 import sentences from './sentences.json'
 
-type SentenceData = SentenceEntry[]
+export type SentenceData = SentenceEntry[]
 
-type SentenceEntry = {
+export type SentenceEntry = {
   sentence: string
   ref: string
 }
