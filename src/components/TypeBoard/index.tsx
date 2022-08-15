@@ -1,8 +1,11 @@
 import React, { useMemo, useState } from 'react'
 
-import invalidKeys from '../core/keys/invalidKeys'
-import resetKeys from '../core/keys/resetKeys'
-import zeroStrokeKeys from '../core/keys/zeroStrokeKeys'
+import GoalSentence from './GoalSentence'
+import UserSentence, {
+  UserSentenceInputEvent,
+  UserSentenceKeyDownEvent,
+  UserSentenceResetEvent,
+} from './UserSentence'
 
 export type TypingResult = {
   state: 'succeed' | 'fail' | 'reset' | 'type'
@@ -39,26 +42,16 @@ function TypeBoard({
 
   const typable = enabled && !locked
 
-  const handleUserTextInput = (event: React.FormEvent<HTMLInputElement>) => {
-    if (!typable) {
-      return
-    }
-
-    const currentUserText = event.currentTarget.value
-
-    if (currentUserText === ' ') {
-      return
-    }
-
-    const currentWords = currentUserText.split(' ')
+  const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
+    const currentWords = value.split(' ')
     const lastComparableWordIndex = currentWords.length - 2
 
-    setUserText(currentUserText)
+    setUserText(value)
 
     onUpdate({
       strokeCount,
       state: 'type',
-      userText: currentUserText,
+      userText: value,
       duration: Date.now() - beginningTime,
     })
 
@@ -74,72 +67,54 @@ function TypeBoard({
       onFail({
         strokeCount,
         state: 'fail',
-        userText: currentUserText,
+        userText: value,
         duration: Date.now() - beginningTime,
       })
       window.setTimeout(() => {
         setUserText('')
         setLocked(false)
       }, lockTimeAfterFail)
-    } else if (currentUserText === sentence + ' ') {
+    } else if (value === sentence + ' ') {
       setUserText('')
       onSucceed({
         strokeCount,
         state: 'succeed',
-        userText: currentUserText,
+        userText: value,
         duration: Date.now() - beginningTime,
       })
     }
   }
 
-  const handleUserTextKeyUp = (event: React.KeyboardEvent) => {
-    if (typable && resetKeys.has(event.code)) {
-      setUserText('')
-      setLocked(false)
-      onReset({
-        userText,
-        strokeCount,
-        state: 'reset',
-        duration: Date.now() - beginningTime,
-      })
-    }
+  const handleUserTextReset = ({ value }: UserSentenceResetEvent) => {
+    setUserText('')
+    setLocked(false)
+    onReset({
+      userText: value,
+      strokeCount,
+      state: 'reset',
+      duration: Date.now() - beginningTime,
+    })
   }
 
-  const handleUserTextKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (typable) {
-      if (userText === '' && event.target.value === '') {
-        setBeginningTime(Date.now())
-        setStrokeCount(0)
-      }
-
-      if (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey) {
-        event.preventDefault()
-      }
-
-      if (!zeroStrokeKeys.has(event.code)) {
-        setStrokeCount((v) => v + 1)
-      }
+  const handleUserTextKeyDown = ({ value }: UserSentenceKeyDownEvent) => {
+    if (userText === '' && value === '') {
+      setBeginningTime(Date.now())
+      setStrokeCount(0)
     }
-  }
 
-  const handleUserTextClick = (event: React.MouseEvent<HTMLInputElement>) => {
-    const length = event.currentTarget.value.length
-    event.currentTarget.setSelectionRange(length, length)
+    setStrokeCount((v) => v + 1)
   }
 
   return (
     <div>
-      <div>{sentence}</div>
-      <input
-        type="text"
-        autoFocus
+      <GoalSentence sentence={sentence} />
+      <UserSentence
         value={userText}
+        autoFocus
+        enabled={typable}
         onInput={handleUserTextInput}
+        onReset={handleUserTextReset}
         onKeyDown={handleUserTextKeyDown}
-        onKeyUp={handleUserTextKeyUp}
-        onClick={handleUserTextClick}
       />
     </div>
   )
