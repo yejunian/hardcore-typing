@@ -18,6 +18,7 @@ export type TypingResult = {
 
 type TypeBoardProps = {
   sentence: SentenceEntry
+  index?: number
   enabled?: boolean
   lockTimeAfterFail?: number
   refreshInterval?: number
@@ -29,6 +30,7 @@ type TypeBoardProps = {
 
 function TypeBoard({
   sentence: sentenceEntry,
+  index,
   enabled = true,
   lockTimeAfterFail = 500,
   refreshInterval = 200,
@@ -129,7 +131,10 @@ function TypeBoard({
 
   return (
     <div>
-      <GoalSentence {...sentenceEntry} />
+      <GoalSentence
+        {...sentenceEntry}
+        index={index}
+      />
       <UserSentence
         value={userText}
         autoFocus

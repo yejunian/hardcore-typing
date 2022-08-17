@@ -150,6 +150,7 @@ function App() {
 
       <TypeBoard
         sentence={shuffledSentences[sentenceIndex] ?? fallbackSentenceEntry}
+        index={sentenceIndex}
         onSucceed={handleTypeBoardSucceed}
         onFail={handleTypeBoardFail}
         onReset={handleTypeBoardReset}
