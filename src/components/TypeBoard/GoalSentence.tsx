@@ -2,14 +2,17 @@ import React from 'react'
 
 type GoalSentenceProps = {
   sentence: string
+  reference: string
 }
 
 function GoalSentence({
-  sentence
+  sentence,
+  reference,
 }: GoalSentenceProps) {
   return (
     <div>
-      {sentence}
+      <p>{sentence}</p>
+      <p>&mdash; {reference}</p>
     </div>
   )
 }

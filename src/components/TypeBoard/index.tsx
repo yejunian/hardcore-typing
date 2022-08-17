@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
+import { SentenceEntry } from '../../data/sentences'
+
 import GoalSentence from './GoalSentence'
 import UserSentence, {
   UserSentenceInputEvent,
@@ -15,7 +17,7 @@ export type TypingResult = {
 }
 
 type TypeBoardProps = {
-  sentence: string
+  sentence: SentenceEntry
   enabled?: boolean
   lockTimeAfterFail?: number
   refreshInterval?: number
@@ -26,7 +28,7 @@ type TypeBoardProps = {
 }
 
 function TypeBoard({
-  sentence,
+  sentence: sentenceEntry,
   enabled = true,
   lockTimeAfterFail = 500,
   refreshInterval = 200,
@@ -40,6 +42,7 @@ function TypeBoard({
   const [beginningTime, setBeginningTime] = useState(Date.now())
   const [strokeCount, setStrokeCount] = useState(0)
 
+  const sentence = sentenceEntry.sentence
   const words = useMemo(() => sentence.split(' '), [sentence])
 
   const typable = enabled && !locked
@@ -126,7 +129,7 @@ function TypeBoard({
 
   return (
     <div>
-      <GoalSentence sentence={sentence} />
+      <GoalSentence {...sentenceEntry} />
       <UserSentence
         value={userText}
         autoFocus

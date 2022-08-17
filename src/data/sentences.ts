@@ -7,4 +7,9 @@ export type SentenceEntry = {
   reference: string
 }
 
+export const fallbackSentenceEntry = {
+  sentence: '',
+  reference: '',
+}
+
 export default sentences as SentenceData

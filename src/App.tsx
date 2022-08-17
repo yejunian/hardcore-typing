@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
 import TypeBoard, { TypingResult } from './components/TypeBoard'
-import sentences, { SentenceData } from './data/sentences'
+import sentences, {
+  fallbackSentenceEntry,
+  SentenceData,
+} from './data/sentences'
 import shuffle from './core/utils/shuffle'
 import StatisticsTable, {
   StatisticsTableColumn,
@@ -146,7 +149,7 @@ function App() {
       <h1>하드코어 타이핑</h1>
 
       <TypeBoard
-        sentence={shuffledSentences[sentenceIndex]?.sentence ?? ''}
+        sentence={shuffledSentences[sentenceIndex] ?? fallbackSentenceEntry}
         onSucceed={handleTypeBoardSucceed}
         onFail={handleTypeBoardFail}
         onReset={handleTypeBoardReset}
