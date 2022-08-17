@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import GoalSentence from './GoalSentence'
 import UserSentence, {
@@ -8,7 +8,7 @@ import UserSentence, {
 } from './UserSentence'
 
 export type TypingResult = {
-  state: 'succeed' | 'fail' | 'reset' | 'type'
+  state: 'succeed' | 'fail' | 'reset' | 'type' | 'interval'
   userText: string
   strokeCount: number
   duration: number
@@ -18,6 +18,7 @@ type TypeBoardProps = {
   sentence: string
   enabled?: boolean
   lockTimeAfterFail?: number
+  refreshInterval?: number
   onSucceed?: (result: TypingResult) => any
   onFail?: (result: TypingResult) => any
   onReset?: (result: TypingResult) => any
@@ -28,6 +29,7 @@ function TypeBoard({
   sentence,
   enabled = true,
   lockTimeAfterFail = 500,
+  refreshInterval = 200,
   onSucceed = () => {},
   onFail = () => {},
   onReset = () => {},
@@ -41,6 +43,23 @@ function TypeBoard({
   const words = useMemo(() => sentence.split(' '), [sentence])
 
   const typable = enabled && !locked
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      if (userText !== '' && typable) {
+        onUpdate({
+          strokeCount,
+          userText,
+          state: 'interval',
+          duration: Date.now() - beginningTime,
+        })
+      }
+    }, refreshInterval)
+
+    return () => {
+      window.clearInterval(interval)
+    }
+  }, [beginningTime, onUpdate, refreshInterval, strokeCount, typable, userText])
 
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
     const currentWords = value.split(' ')
