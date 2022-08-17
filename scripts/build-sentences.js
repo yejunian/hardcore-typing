@@ -8,7 +8,7 @@ const path = require('path')
 async function buildSentences(dir, refFile) {
   const targetDirectory = path.resolve(dir)
 
-  const ref = await getReferences(dir, refFile)
+  const references = await getReferences(dir, refFile)
 
   const srcFiles = await fs.readdir(targetDirectory)
   const data = []
@@ -31,7 +31,7 @@ async function buildSentences(dir, refFile) {
 
       data.push({
         sentence,
-        ref: ref.get(srcFile),
+        reference: references.get(srcFile),
       })
     }
   }
@@ -49,12 +49,12 @@ async function buildSentences(dir, refFile) {
  * @returns {Promise<Map<string, string>>}
  */
 async function getReferences(targetDirectory, refFile) {
-  /** @type {{ filename: string, ref: string }[]} */
+  /** @type {{ filename: string, reference: string }[]} */
   const parsed = JSON.parse(await fs.readFile(`${targetDirectory}/${refFile}`))
 
   const map = new Map()
   for (const entry of parsed) {
-    map.set(entry.filename, entry.ref)
+    map.set(entry.filename, entry.reference)
   }
 
   return map
