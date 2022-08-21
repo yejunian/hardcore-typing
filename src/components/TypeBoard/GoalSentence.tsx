@@ -1,5 +1,7 @@
 import React from 'react'
 
+import styles from './GoalSentence.module.scss'
+
 type GoalSentenceProps = {
   sentence: string
   reference: string
@@ -12,11 +14,13 @@ function GoalSentence({
   index,
 }: GoalSentenceProps) {
   return (
-    <div>
-      {typeof index === 'number' && <div>#{index + 1}</div>}
-      <p>{sentence}</p>
-      <p>&mdash; {reference}</p>
-    </div>
+    <section className={styles.root}>
+      {typeof index === 'number' && (
+        <div className={styles.index}>#{index + 1}</div>
+      )}
+      <div className={styles.sentence}>{sentence}</div>
+      <div className={styles.reference}>&mdash; {reference}</div>
+    </section>
   )
 }
 
