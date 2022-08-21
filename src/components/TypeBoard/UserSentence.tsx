@@ -4,6 +4,8 @@ import invalidKeys from '../../core/keys/invalidKeys'
 import resetKeys from '../../core/keys/resetKeys'
 import zeroStrokeKeys from '../../core/keys/zeroStrokeKeys'
 
+import styles from './UserSentence.module.scss'
+
 export type UserSentenceProps = {
   value: string
   autoFocus?: boolean
@@ -36,7 +38,7 @@ function UserSentence({
 }: UserSentenceProps) {
   let lastLocalValue = value
 
-  const handleUserTextInput = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleUserTextInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const currentUserText = event.currentTarget.value
 
     if (enabled && onInput && currentUserText !== ' ') {
@@ -46,7 +48,7 @@ function UserSentence({
   }
 
   const handleUserTextKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
+    event: React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     if (enabled) {
       if (invalidKeys.has(event.code) || event.ctrlKey || event.metaKey) {
@@ -68,21 +70,26 @@ function UserSentence({
     }
   }
 
-  const handleUserTextClick = (event: React.MouseEvent<HTMLInputElement>) => {
+  const handleUserTextClick = (
+    event: React.MouseEvent<HTMLTextAreaElement>
+  ) => {
     const length = event.currentTarget.value.length
     event.currentTarget.setSelectionRange(length, length)
   }
 
   return (
-    <input
-      type="text"
-      autoFocus={autoFocus}
-      value={value}
-      onInput={handleUserTextInput}
-      onKeyDown={handleUserTextKeyDown}
-      onKeyUp={handleUserTextKeyUp}
-      onClick={handleUserTextClick}
-    />
+    <section className={styles.root}>
+      <textarea
+        className={styles.sentence}
+        autoFocus={autoFocus}
+        value={value}
+        placeholder="위 문장을 따라 입력하세요."
+        onInput={handleUserTextInput}
+        onKeyDown={handleUserTextKeyDown}
+        onKeyUp={handleUserTextKeyUp}
+        onClick={handleUserTextClick}
+      />
+    </section>
   )
 }
 
