@@ -12,6 +12,8 @@ import StatisticsTable, {
 } from './components/StatisticsTable'
 import getPerMinuteByMilliseconds from './utils/getPerMinuteByMilliseconds'
 
+import styles from './App.module.scss'
+
 const statisticsTableColumn: StatisticsTableColumn[] = [
   { name: 'failureCount', label: '실패 횟수', fractionDigits: 0 },
   { name: 'spm', label: '분당 타수', fractionDigits: 1 },
@@ -145,23 +147,53 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>하드코어 타이핑</h1>
+    <section className={styles.root}>
+      <main className={styles.main}>
+        <h1 className={styles.title}>&#x2328;&#xfe0f; 하드코어 타이핑</h1>
 
-      <TypeBoard
-        sentence={shuffledSentences[sentenceIndex] ?? fallbackSentenceEntry}
-        index={sentenceIndex}
-        onSucceed={handleTypeBoardSucceed}
-        onFail={handleTypeBoardFail}
-        onReset={handleTypeBoardReset}
-        onUpdate={handleTypeBoardUpdate}
-      />
+        <TypeBoard
+          className={styles.board}
+          sentence={shuffledSentences[sentenceIndex] ?? fallbackSentenceEntry}
+          index={sentenceIndex}
+          onSucceed={handleTypeBoardSucceed}
+          onFail={handleTypeBoardFail}
+          onReset={handleTypeBoardReset}
+          onUpdate={handleTypeBoardUpdate}
+        />
 
-      <StatisticsTable
-        records={statisticsTableRecord}
-        columns={statisticsTableColumn}
-      />
-    </div>
+        <StatisticsTable
+          className={styles.statistics}
+          records={statisticsTableRecord}
+          columns={statisticsTableColumn}
+        />
+      </main>
+
+      <footer className={styles.footer}>
+        <a
+          href="https://github.com/yejunian/hardcore-typing/blob/main/LICENSE"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          Copyright &copy; 2022 yejunian
+        </a>
+        {' | '}
+        <a
+          href="https://github.com/yejunian"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          GitHub Profile
+        </a>
+        {' | '}
+        <a
+          href="https://github.com/yejunian/hardcore-typing"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          Repository
+        </a>
+      </footer>
+    </section>
   )
 }
 
