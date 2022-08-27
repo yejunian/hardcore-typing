@@ -1,5 +1,7 @@
 import React from 'react'
 
+import styles from './StatisticsTable.module.scss'
+
 export type StatisticsTableProps = {
   records?: StatisticsTableRecord[]
   columns?: StatisticsTableColumn[]
@@ -26,20 +28,20 @@ function StatisticsTable({
   columns = [],
 }: StatisticsTableProps) {
   return (
-    <table>
+    <table className={styles.root}>
       <thead>
-        <tr>
-          <th></th>
+        <tr className={styles.row}>
+          <th className={styles.column}></th>
           {columns.map(({ name, label }, index) => (
-            <th key={`${name}${index}`}>{label}</th>
+            <th className={styles.column} key={`${name}${index}`}>{label}</th>
           ))}
         </tr>
       </thead>
 
       <tbody>
         {records.map((record, trIndex) => (
-          <tr key={trIndex}>
-            <th>{record.label}</th>
+          <tr key={trIndex} className={styles.row}>
+            <th className={styles.column}>{record.label}</th>
             {columns.map(({ name, fractionDigits }, tdIndex) => {
               const value = record[name]
               if (
@@ -47,14 +49,14 @@ function StatisticsTable({
                 typeof fractionDigits === 'number'
               ) {
                 return (
-                  <td key={tdIndex}>
+                  <td key={tdIndex} className={styles.column}>
                     {value < 0 || isNaN(value)
                       ? '-'
                       : value.toFixed(fractionDigits)}
                   </td>
                 )
               }
-              return <td key={tdIndex}>value</td>
+              return <td key={tdIndex} className={styles.column}>value</td>
             })}
           </tr>
         ))}

@@ -1,0 +1,35 @@
+@use 'sass:math';
+
+@use '../global.scss';
+
+.root {
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  font-weight: 500;
+
+  .row {
+    th {
+      font-size: 14px;
+    }
+
+    td {
+      font-size: 16px;
+    }
+
+    .column {
+      padding: 8px math.div(global.$grid-column-gap, 2);
+      width: global.$grid-column-width;
+
+      text-align: center;
+
+      &:first-child {
+        padding-left: 0;
+      }
+
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+  }
+}
