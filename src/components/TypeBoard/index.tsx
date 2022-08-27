@@ -1,6 +1,8 @@
+import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { SentenceEntry } from '../../data/sentences'
+import CommonProps from '../CommonProps'
 
 import GoalSentence from './GoalSentence'
 import UserSentence, {
@@ -17,7 +19,7 @@ export type TypingResult = {
   duration: number
 }
 
-type TypeBoardProps = {
+type TypeBoardProps = CommonProps & {
   sentence: SentenceEntry
   index?: number
   enabled?: boolean
@@ -30,6 +32,7 @@ type TypeBoardProps = {
 }
 
 function TypeBoard({
+  className,
   sentence: sentenceEntry,
   index,
   enabled = true,
@@ -131,7 +134,7 @@ function TypeBoard({
   }
 
   return (
-    <section className={styles.root}>
+    <section className={classNames(className, styles.root)}>
       <GoalSentence
         {...sentenceEntry}
         index={index}

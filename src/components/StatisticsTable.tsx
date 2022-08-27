@@ -1,8 +1,10 @@
+import classNames from 'classnames'
 import React from 'react'
 
+import CommonProps from './CommonProps'
 import styles from './StatisticsTable.module.scss'
 
-export type StatisticsTableProps = {
+export type StatisticsTableProps = CommonProps & {
   records?: StatisticsTableRecord[]
   columns?: StatisticsTableColumn[]
 }
@@ -24,11 +26,12 @@ export type StatisticsTableColumn = {
 }
 
 function StatisticsTable({
+  className,
   records = [],
   columns = [],
 }: StatisticsTableProps) {
   return (
-    <table className={styles.root}>
+    <table className={classNames(className, styles.root)}>
       <thead>
         <tr className={styles.row}>
           <th className={styles.column}></th>
