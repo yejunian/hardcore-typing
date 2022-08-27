@@ -8,6 +8,7 @@ import UserSentence, {
   UserSentenceKeyDownEvent,
   UserSentenceResetEvent,
 } from './UserSentence'
+import styles from './index.module.scss'
 
 export type TypingResult = {
   state: 'succeed' | 'fail' | 'reset' | 'type' | 'interval'
@@ -130,7 +131,7 @@ function TypeBoard({
   }
 
   return (
-    <div>
+    <section className={styles.root}>
       <GoalSentence
         {...sentenceEntry}
         index={index}
@@ -143,7 +144,7 @@ function TypeBoard({
         onReset={handleUserTextReset}
         onKeyDown={handleUserTextKeyDown}
       />
-    </div>
+    </section>
   )
 }
 
