@@ -49,7 +49,7 @@ function TypeBoard({
   const [strokeCount, setStrokeCount] = useState(0)
 
   const sentence = sentenceEntry.sentence
-  const words = useMemo(() => sentence.split(' '), [sentence])
+  const words = useMemo(() => sentence.split(/ |\u00b7/), [sentence])
 
   const typable = enabled && !locked
 
@@ -71,7 +71,7 @@ function TypeBoard({
   }, [beginningTime, onUpdate, refreshInterval, strokeCount, typable, userText])
 
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
-    const currentWords = value.split(' ')
+    const currentWords = value.split(/ |\u00b7/)
     const lastComparableWordIndex = currentWords.length - 2
 
     setUserText(value)

@@ -115,7 +115,7 @@ function App() {
     strokeCount,
     duration,
   }: TypingResult) => {
-    const wordCount = userText.trim().split(' ').length
+    const wordCount = userText.trim().split(/ |\u00b7/).length
 
     setPrevRecord({
       duration: duration / 1000,
@@ -157,7 +157,7 @@ function App() {
     duration,
   }: TypingResult) => {
     setCurrentStrokeCount(strokeCount)
-    setCurrentWordCount(userText.trim().split(' ').length)
+    setCurrentWordCount(userText.trim().split(/ |\u00b7/).length)
     setCurrentDuration(duration)
   }
 
