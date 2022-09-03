@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import TypeBoard, { TypingResult } from './components/TypeBoard'
 import sentences, {
   fallbackSentenceEntry,
   SentenceData,
+  SentenceEntry,
 } from './data/sentences'
 import shuffle from './core/utils/shuffle'
 import StatisticsTable, {
@@ -51,6 +52,20 @@ function App() {
   const [overallStrokeCount, setOverallStrokeCount] = useState(0)
   const [overallWordCount, setOverallWordCount] = useState(0)
   const [overallDuration, setOverallDuration] = useState(0)
+
+  const currentSentenceEntry: SentenceEntry = useMemo(
+    () =>
+      shuffledSentences.length === 0
+        ? fallbackSentenceEntry
+        : {
+            ...shuffledSentences[sentenceIndex],
+            sentence: shuffledSentences[sentenceIndex].sentence.replaceAll(
+              /\u00b7/g,
+              ', '
+            ),
+          },
+    [sentenceIndex, shuffledSentences]
+  )
 
   const statisticsTableRecord: StatisticsTableRecord[] = [
     sentenceIndex === 0 ? fallbackRecord : prevRecord,
@@ -153,7 +168,7 @@ function App() {
 
         <TypeBoard
           className={styles.board}
-          sentence={shuffledSentences[sentenceIndex] ?? fallbackSentenceEntry}
+          sentence={currentSentenceEntry}
           index={sentenceIndex}
           onSucceed={handleTypeBoardSucceed}
           onFail={handleTypeBoardFail}
