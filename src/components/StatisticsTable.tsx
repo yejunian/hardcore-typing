@@ -36,7 +36,9 @@ function StatisticsTable({
         <tr className={styles.row}>
           <th className={styles.column}></th>
           {columns.map(({ name, label }, index) => (
-            <th className={styles.column} key={`${name}${index}`}>{label}</th>
+            <th className={styles.column} key={`${name}${index}`}>
+              {label}
+            </th>
           ))}
         </tr>
       </thead>
@@ -59,7 +61,11 @@ function StatisticsTable({
                   </td>
                 )
               }
-              return <td key={tdIndex} className={styles.column}>value</td>
+              return (
+                <td key={tdIndex} className={styles.column}>
+                  value
+                </td>
+              )
             })}
           </tr>
         ))}

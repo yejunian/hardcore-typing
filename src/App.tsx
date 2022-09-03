@@ -72,10 +72,7 @@ function App() {
     {
       label: '현재 문장',
       failureCount: currentFailureCount,
-      spm: getPerMinuteByMilliseconds(
-        currentStrokeCount,
-        currentDuration
-      ),
+      spm: getPerMinuteByMilliseconds(currentStrokeCount, currentDuration),
       wpm: getPerMinuteByMilliseconds(currentWordCount, currentDuration),
       strokeCount: currentStrokeCount,
       wordCount: currentWordCount,
