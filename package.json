@@ -1,6 +1,6 @@
 {
   "name": "hardcore-typing",
-  "version": "0.1.0-dev",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "classnames": "^2.3.1",
