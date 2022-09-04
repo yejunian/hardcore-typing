@@ -1,0 +1,77 @@
+@use 'sass:math';
+
+.root {
+  $font-size-normal: 20px;
+  $font-size-small: 14px;
+  $font-weight-normal: 600;
+  $font-weight-small: 500;
+
+  display: grid;
+  grid-template:
+    'sentence sentence' 1fr
+    'index    reference' auto
+    / auto 1fr;
+  gap: 16px;
+
+  box-sizing: border-box;
+  border: 2px solid #8a909a;
+  border-radius: 8px;
+  padding: 16px;
+  width: 100%;
+
+  background-color: #f6f8fc;
+
+  .index {
+    grid-area: index;
+    align-self: flex-end;
+
+    line-height: 1;
+
+    color: #6b727f;
+    font: {
+      size: $font-size-small;
+      weight: $font-weight-small;
+    };
+  }
+
+  .sentence {
+    $line-height-number: 1.6;
+    $margin-y: math.div(-1 * $font-size-normal * ($line-height-number - 1), 2);
+
+    grid-area: sentence;
+
+    margin: $margin-y 0;
+    height: 3 * ($font-size-normal * $line-height-number);
+
+    line-height: $line-height-number;
+
+    color: #000000;
+    font: {
+      size: $font-size-normal;
+      weight: $font-weight-normal;
+    };
+
+    .complete {
+      color: #6b727f;
+    }
+  }
+
+  .reference {
+    $line-height-number: 1.2;
+    $margin-y: math.div(-1 * $font-size-small * ($line-height-number - 1), 2);
+
+    grid-area: reference;
+    align-self: flex-end;
+
+    margin: $margin-y 0;
+
+    line-height: $line-height-number;
+    text-align: right;
+
+    color: #6b727f;
+    font: {
+      size: $font-size-small;
+      weight: $font-weight-small;
+    };
+  }
+}

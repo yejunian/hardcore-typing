@@ -1,0 +1,54 @@
+@use 'sass:color';
+
+@use './global';
+
+.root {
+  .main {
+    display: grid;
+    grid-template:
+      'title      title' auto
+      'board      board' auto
+      'statistics buttons' auto
+      / global.grid-column-span-width(7) global.$grid-column-width;
+    gap: global.$grid-column-gap;
+
+    border-radius: 8px;
+    padding: global.$grid-column-gap;
+    width: global.grid-column-span-width(8);
+
+    background-color: #f6f8fc;
+
+    .title {
+      margin: 0;
+
+      line-height: 1;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .board {
+      grid-area: board;
+    }
+
+    .statistics {
+      grid-area: statistics;
+    }
+  }
+
+  .footer {
+    margin: global.$grid-column-gap;
+
+    line-height: 1;
+    color: #51555d;
+    font-size: 14px;
+
+    a {
+      color: #51555d;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

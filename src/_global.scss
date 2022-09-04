@@ -1,0 +1,8 @@
+@function grid-column-span-width($column-count) {
+  $column-only-width: $column-count * $grid-column-width;
+  $gap-only-width: ($column-count - 1) * $grid-column-gap;
+  @return $column-only-width + $gap-only-width;
+}
+
+$grid-column-gap: 24px;
+$grid-column-width: 80px;

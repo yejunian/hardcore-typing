@@ -1,0 +1,7 @@
+@use '../../global';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: global.$grid-column-gap;
+}
