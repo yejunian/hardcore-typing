@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/hardcore-typing/static/css/main.fb85acb3.css",
+    "main.js": "/hardcore-typing/static/js/main.9c951f11.js",
+    "static/js/787.709cdfb3.chunk.js": "/hardcore-typing/static/js/787.709cdfb3.chunk.js",
+    "index.html": "/hardcore-typing/index.html",
+    "main.fb85acb3.css.map": "/hardcore-typing/static/css/main.fb85acb3.css.map",
+    "main.9c951f11.js.map": "/hardcore-typing/static/js/main.9c951f11.js.map",
+    "787.709cdfb3.chunk.js.map": "/hardcore-typing/static/js/787.709cdfb3.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fb85acb3.css",
+    "static/js/main.9c951f11.js"
+  ]
+}
