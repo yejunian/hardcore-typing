@@ -9,14 +9,17 @@ export type StatisticsTableProps = CommonProps & {
   columns?: StatisticsTableColumn[]
 }
 
-export type StatisticsTableRecord = {
-  label: string
+export type StatisticsTableRecordPatch = {
   failureCount: number
-  spm: number
-  wpm: number
   strokeCount: number
   wordCount: number
   duration: number
+}
+
+export type StatisticsTableRecord = StatisticsTableRecordPatch & {
+  label: string
+  spm: number
+  wpm: number
 }
 
 export type StatisticsTableColumn = {
