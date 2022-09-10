@@ -21,7 +21,7 @@ const statisticsTableColumn: StatisticsTableColumn[] = [
   { name: 'wpm', label: '분당 어절수', fractionDigits: 1 },
   { name: 'strokeCount', label: '입력 타수', fractionDigits: 0 },
   { name: 'wordCount', label: '입력 어절수', fractionDigits: 0 },
-  { name: 'duration', label: '입력 시간', fractionDigits: 3 },
+  { name: 'duration', label: '입력 시간', fractionDigits: 3, factor: 0.001 },
 ]
 
 function App() {
@@ -72,14 +72,14 @@ function App() {
     patchPrevRecord({
       strokeCount,
       wordCount,
-      duration: duration / 1000,
+      duration: duration,
       failureCount: currentRecord.failureCount,
     })
 
     patchOverallRecord({
       strokeCount: overallRecord.strokeCount + strokeCount,
       wordCount: overallRecord.wordCount + wordCount,
-      duration: overallRecord.duration + duration / 1000,
+      duration: overallRecord.duration + duration,
     })
 
     patchCurrentRecord({
@@ -110,7 +110,7 @@ function App() {
   }: TypingResult) => {
     patchCurrentRecord({
       strokeCount,
-      duration: duration / 1000,
+      duration: duration,
       wordCount: userText.trim().split(/ |\u00b7/).length,
     })
   }

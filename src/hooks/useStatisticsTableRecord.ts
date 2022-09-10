@@ -60,7 +60,7 @@ function useStatisticsTableRecord(
       ) {
         newRecord.spm = getPerMinuteByMilliseconds(
           newRecord.strokeCount,
-          newRecord.duration * 1000
+          newRecord.duration
         )
       }
       if (
@@ -69,7 +69,7 @@ function useStatisticsTableRecord(
       ) {
         newRecord.wpm = getPerMinuteByMilliseconds(
           newRecord.wordCount,
-          newRecord.duration * 1000
+          newRecord.duration
         )
       }
 

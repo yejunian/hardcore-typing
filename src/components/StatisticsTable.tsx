@@ -26,6 +26,7 @@ export type StatisticsTableColumn = {
   name: keyof StatisticsTableRecord
   label: string
   fractionDigits?: number
+  factor?: number
 }
 
 function StatisticsTable({
@@ -50,23 +51,24 @@ function StatisticsTable({
         {records.map((record, trIndex) => (
           <tr key={trIndex} className={styles.row}>
             <th className={styles.column}>{record.label}</th>
-            {columns.map(({ name, fractionDigits }, tdIndex) => {
-              const value = record[name]
-              if (
-                typeof value === 'number' &&
-                typeof fractionDigits === 'number'
-              ) {
-                return (
-                  <td key={tdIndex} className={styles.column}>
-                    {value < 0 || isNaN(value)
-                      ? '-'
-                      : value.toFixed(fractionDigits)}
-                  </td>
-                )
+            {columns.map(({ name, fractionDigits, factor }, tdIndex) => {
+              const originalValue = record[name]
+              let value
+              if (typeof originalValue === 'number') {
+                if (typeof fractionDigits === 'number') {
+                  const factoredValue = originalValue * (factor ?? 1)
+                  value = factoredValue < 0 || isNaN(factoredValue)
+                    ? '-'
+                    : factoredValue.toFixed(fractionDigits)
+                } else {
+                  value = originalValue * (factor ?? 1)
+                }
+              } else {
+                value = originalValue
               }
               return (
                 <td key={tdIndex} className={styles.column}>
-                  value
+                  {value}
                 </td>
               )
             })}
