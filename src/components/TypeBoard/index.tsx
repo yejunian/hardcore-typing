@@ -114,14 +114,15 @@ function TypeBoard({
   }
 
   const handleUserTextReset = ({ value }: UserSentenceResetEvent) => {
-    setUserText('')
-    setLocked(false)
-    onReset({
-      userText: value,
-      strokeCount,
-      state: 'reset',
-      duration: Date.now() - beginningTime,
-    })
+    if (!locked) {
+      setUserText('')
+      onReset({
+        userText: value,
+        strokeCount,
+        state: 'reset',
+        duration: Date.now() - beginningTime,
+      })
+    }
   }
 
   const handleUserTextKeyDown = ({ value }: UserSentenceKeyDownEvent) => {
