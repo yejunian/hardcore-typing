@@ -2,6 +2,7 @@ import React from 'react'
 
 import invalidKeys from '../../core/keys/invalidKeys'
 import resetKeys from '../../core/keys/resetKeys'
+import submitKeys from '../../core/keys/submitKeys'
 import zeroStrokeKeys from '../../core/keys/zeroStrokeKeys'
 
 import styles from './UserSentence.module.scss'
@@ -13,6 +14,7 @@ export type UserSentenceProps = {
   onInput?: (param: UserSentenceInputEvent) => void
   onReset?: (param: UserSentenceResetEvent) => void
   onKeyDown?: (param: UserSentenceKeyDownEvent) => void
+  onSubmit?: (param: UserSentenceSubmitEvent) => void
 }
 
 export type UserSentenceInputEvent = {
@@ -28,6 +30,10 @@ export type UserSentenceKeyDownEvent = {
   value: string
 }
 
+export type UserSentenceSubmitEvent = {
+  value: string
+}
+
 function UserSentence({
   value,
   autoFocus = false,
@@ -35,6 +41,7 @@ function UserSentence({
   onInput,
   onReset,
   onKeyDown,
+  onSubmit,
 }: UserSentenceProps) {
   let lastLocalValue = value
 
@@ -55,7 +62,18 @@ function UserSentence({
         event.preventDefault()
       }
 
-      if (onKeyDown && !zeroStrokeKeys.has(event.code)) {
+      if (onSubmit && submitKeys.has(event.code)) {
+        event.preventDefault()
+        onSubmit({
+          value: lastLocalValue,
+        })
+      }
+
+      if (
+        onKeyDown &&
+        !zeroStrokeKeys.has(event.code) &&
+        !submitKeys.has(event.code)
+      ) {
         onKeyDown({
           code: event.code,
           value: lastLocalValue,

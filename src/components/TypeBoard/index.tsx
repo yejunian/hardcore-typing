@@ -9,6 +9,7 @@ import UserSentence, {
   UserSentenceInputEvent,
   UserSentenceKeyDownEvent,
   UserSentenceResetEvent,
+  UserSentenceSubmitEvent,
 } from './UserSentence'
 import styles from './index.module.scss'
 
@@ -147,6 +148,28 @@ function TypeBoard({
     setStrokeCount((v) => v + 1)
   }
 
+  const handleUserTextSubmit = ({ value }: UserSentenceSubmitEvent) => {
+    if (value === sentence) {
+      setLocked(true)
+      setResetting(true)
+      setUserText('')
+      onSucceed({
+        strokeCount: strokeCount + 1,
+        state: 'succeed',
+        userText: value,
+        duration: Date.now() - beginningTime,
+      })
+    } else if (value !== '') {
+      lockAndResetInput()
+      onFail({
+        strokeCount: strokeCount + 1,
+        state: 'fail',
+        userText: value,
+        duration: Date.now() - beginningTime,
+      })
+    }
+  }
+
   return (
     <section className={classNames(className, styles.root)}>
       <GoalSentence
@@ -160,6 +183,7 @@ function TypeBoard({
         onInput={handleUserTextInput}
         onReset={handleUserTextReset}
         onKeyDown={handleUserTextKeyDown}
+        onSubmit={handleUserTextSubmit}
       />
     </section>
   )
