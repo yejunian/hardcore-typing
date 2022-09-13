@@ -11,7 +11,6 @@ const zeroStrokeKeys = new Set([
   'ContextMenu',
   'ControlLeft',
   'ControlRight',
-  'Enter',
   'MetaLeft',
   'MetaRight',
   'ShiftLeft',
@@ -41,7 +40,6 @@ const zeroStrokeKeys = new Set([
   // Numpad Section
   'NumLock',
   'NumpadBackspace',
-  'NumpadEnter',
 
   // Function Section
   'Escape',

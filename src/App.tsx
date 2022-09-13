@@ -67,7 +67,7 @@ function App() {
     strokeCount,
     duration,
   }: TypingResult) => {
-    const wordCount = userText.trim().split(/ |\u00b7/).length
+    const wordCount = userText.trim().split(/[ \n\u00b7]/).length
 
     patchPrevRecord({
       strokeCount,
@@ -111,7 +111,7 @@ function App() {
     patchCurrentRecord({
       strokeCount,
       duration: duration,
-      wordCount: userText.trim().split(/ |\u00b7/).length,
+      wordCount: userText.trim().split(/[ \n\u00b7]/).length,
     })
   }
 

@@ -41,7 +41,12 @@ function UserSentence({
   const handleUserTextInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const currentUserText = event.currentTarget.value
 
-    if (enabled && onInput && currentUserText !== ' ') {
+    if (
+      enabled &&
+      onInput &&
+      currentUserText !== ' ' &&
+      currentUserText !== '\n'
+    ) {
       lastLocalValue = currentUserText
       onInput({ value: lastLocalValue })
     }
@@ -55,7 +60,11 @@ function UserSentence({
         event.preventDefault()
       }
 
-      if (onKeyDown && !zeroStrokeKeys.has(event.code)) {
+      const isComposingEnter =
+        (event.code === 'Enter' || event.code === 'NumberEnter') &&
+        event.nativeEvent.isComposing
+
+      if (onKeyDown && !zeroStrokeKeys.has(event.code) && !isComposingEnter) {
         onKeyDown({
           code: event.code,
           value: lastLocalValue,
