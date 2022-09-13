@@ -9,7 +9,6 @@ import UserSentence, {
   UserSentenceInputEvent,
   UserSentenceKeyDownEvent,
   UserSentenceResetEvent,
-  UserSentenceSubmitEvent,
 } from './UserSentence'
 import styles from './index.module.scss'
 
@@ -45,7 +44,6 @@ function TypeBoard({
   onUpdate = () => {},
 }: TypeBoardProps) {
   const [locked, setLocked] = useState(false)
-  const [resetting, setResetting] = useState(false)
   const [userText, setUserText] = useState('')
   const [beginningTime, setBeginningTime] = useState(Date.now())
   const [strokeCount, setStrokeCount] = useState(0)
@@ -72,22 +70,6 @@ function TypeBoard({
     }
   }, [beginningTime, onUpdate, refreshInterval, strokeCount, typable, userText])
 
-  useEffect(() => {
-    if (resetting) {
-      setLocked(false)
-      setResetting(false)
-    }
-  }, [resetting])
-
-  const lockAndResetInput = () => {
-    setLocked(true)
-
-    window.setTimeout(() => {
-      setUserText('')
-      setResetting(true)
-    }, lockTimeAfterFail)
-  }
-
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
     const currentWords = value.split(/ |\u00b7/)
     const lastComparableWordIndex = currentWords.length - 2
@@ -109,13 +91,17 @@ function TypeBoard({
     const expectedWord = words[lastComparableWordIndex]
 
     if (enteredWord !== expectedWord) {
-      lockAndResetInput()
+      setLocked(true)
       onFail({
         strokeCount,
         state: 'fail',
         userText: value,
         duration: Date.now() - beginningTime,
       })
+      window.setTimeout(() => {
+        setUserText('')
+        setLocked(false)
+      }, lockTimeAfterFail)
     } else if (value === sentence + ' ') {
       setUserText('')
       onSucceed({
@@ -148,28 +134,6 @@ function TypeBoard({
     setStrokeCount((v) => v + 1)
   }
 
-  const handleUserTextSubmit = ({ value }: UserSentenceSubmitEvent) => {
-    if (value === sentence) {
-      setLocked(true)
-      setResetting(true)
-      setUserText('')
-      onSucceed({
-        strokeCount: strokeCount + 1,
-        state: 'succeed',
-        userText: value,
-        duration: Date.now() - beginningTime,
-      })
-    } else if (value !== '') {
-      lockAndResetInput()
-      onFail({
-        strokeCount: strokeCount + 1,
-        state: 'fail',
-        userText: value,
-        duration: Date.now() - beginningTime,
-      })
-    }
-  }
-
   return (
     <section className={classNames(className, styles.root)}>
       <GoalSentence
@@ -183,7 +147,6 @@ function TypeBoard({
         onInput={handleUserTextInput}
         onReset={handleUserTextReset}
         onKeyDown={handleUserTextKeyDown}
-        onSubmit={handleUserTextSubmit}
       />
     </section>
   )
