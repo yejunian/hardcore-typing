@@ -44,6 +44,7 @@ function TypeBoard({
   onUpdate = () => {},
 }: TypeBoardProps) {
   const [locked, setLocked] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [userText, setUserText] = useState('')
   const [beginningTime, setBeginningTime] = useState(Date.now())
   const [strokeCount, setStrokeCount] = useState(0)
@@ -70,6 +71,22 @@ function TypeBoard({
     }
   }, [beginningTime, onUpdate, refreshInterval, strokeCount, typable, userText])
 
+  useEffect(() => {
+    if (resetting) {
+      setLocked(false)
+      setResetting(false)
+    }
+  }, [resetting])
+
+  const lockAndResetInput = () => {
+    setLocked(true)
+
+    window.setTimeout(() => {
+      setUserText('')
+      setResetting(true)
+    }, lockTimeAfterFail)
+  }
+
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
     const currentWords = value.split(/ |\u00b7/)
     const lastComparableWordIndex = currentWords.length - 2
@@ -91,17 +108,13 @@ function TypeBoard({
     const expectedWord = words[lastComparableWordIndex]
 
     if (enteredWord !== expectedWord) {
-      setLocked(true)
+      lockAndResetInput()
       onFail({
         strokeCount,
         state: 'fail',
         userText: value,
         duration: Date.now() - beginningTime,
       })
-      window.setTimeout(() => {
-        setUserText('')
-        setLocked(false)
-      }, lockTimeAfterFail)
     } else if (value === sentence + ' ') {
       setUserText('')
       onSucceed({
