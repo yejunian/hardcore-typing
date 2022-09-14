@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 
+import { separator } from '../../core/constants'
 import { SentenceEntry } from '../../data/sentences'
 import CommonProps from '../CommonProps'
 
@@ -49,7 +50,7 @@ function TypeBoard({
   const [strokeCount, setStrokeCount] = useState(0)
 
   const sentence = sentenceEntry.sentence
-  const words = useMemo(() => sentence.split(/[ \n\u00b7]/), [sentence])
+  const words = useMemo(() => sentence.split(separator), [sentence])
 
   const typable = enabled && !locked
 
@@ -71,7 +72,7 @@ function TypeBoard({
   }, [beginningTime, onUpdate, refreshInterval, strokeCount, typable, userText])
 
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
-    const currentWords = value.split(/[ \n\u00b7]/)
+    const currentWords = value.split(separator)
     const lastComparableWordIndex = currentWords.length - 2
 
     setUserText(value)
