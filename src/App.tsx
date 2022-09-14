@@ -5,7 +5,7 @@ import StatisticsTable, {
   StatisticsTableColumn,
   StatisticsTableRecord,
 } from './components/StatisticsTable'
-import { separator } from './core/constants'
+import countWords from './core/utils/countWords'
 import shuffle from './core/utils/shuffle'
 import sentences, {
   fallbackSentenceEntry,
@@ -68,7 +68,7 @@ function App() {
     strokeCount,
     duration,
   }: TypingResult) => {
-    const wordCount = userText.trim().split(separator).length
+    const wordCount = countWords(userText)
 
     patchPrevRecord({
       strokeCount,
@@ -112,7 +112,7 @@ function App() {
     patchCurrentRecord({
       strokeCount,
       duration: duration,
-      wordCount: userText.trim().split(separator).length,
+      wordCount: countWords(userText),
     })
   }
 
