@@ -64,7 +64,12 @@ function UserSentence({
         (event.code === 'Enter' || event.code === 'NumberEnter') &&
         event.nativeEvent.isComposing
 
-      if (onKeyDown && !zeroStrokeKeys.has(event.code) && !isComposingEnter) {
+      if (
+        onKeyDown &&
+        !event.repeat &&
+        !zeroStrokeKeys.has(event.code) &&
+        !isComposingEnter
+      ) {
         onKeyDown({
           code: event.code,
           value: lastLocalValue,
