@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { separator } from '../../core/constants'
+import tokenizeString from '../../core/utils/tokenizeSentence'
 import { SentenceEntry } from '../../data/sentences'
 import CommonProps from '../CommonProps'
 
@@ -50,7 +50,7 @@ function TypeBoard({
   const [strokeCount, setStrokeCount] = useState(0)
 
   const sentence = sentenceEntry.sentence
-  const words = useMemo(() => sentence.split(separator), [sentence])
+  const words = useMemo(() => tokenizeString(sentence), [sentence])
 
   const typable = enabled && !locked
 
@@ -72,7 +72,7 @@ function TypeBoard({
   }, [beginningTime, onUpdate, refreshInterval, strokeCount, typable, userText])
 
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
-    const currentWords = value.split(separator)
+    const currentWords = tokenizeString(value)
     const lastComparableWordIndex = currentWords.length - 2
 
     setUserText(value)
@@ -88,29 +88,41 @@ function TypeBoard({
       return
     }
 
-    const enteredWord = currentWords[lastComparableWordIndex]
-    const expectedWord = words[lastComparableWordIndex]
+    const lastIndex = currentWords.length - 1
 
-    if (enteredWord !== expectedWord) {
-      setLocked(true)
-      onFail({
-        strokeCount,
-        state: 'fail',
-        userText: value,
-        duration: Date.now() - beginningTime,
-      })
-      window.setTimeout(() => {
+    if (
+      currentWords[lastIndex - 1]?.type === 'word' &&
+      currentWords[lastIndex]?.type === 'separator'
+    ) {
+      const lengthCompletion = words.length < currentWords.length
+      const wordEquality =
+        currentWords[lastIndex - 1]?.content === words[lastIndex - 1]?.content
+      const separatorEquality =
+        currentWords[lastIndex]?.content === words[lastIndex]?.content
+
+      if (!wordEquality || (!lengthCompletion && !separatorEquality)) {
+        setLocked(true)
+        onFail({
+          strokeCount,
+          state: 'fail',
+          userText: value,
+          duration: Date.now() - beginningTime,
+        })
+        window.setTimeout(() => {
+          setUserText('')
+          setLocked(false)
+        }, lockTimeAfterFail)
+      }
+
+      if (value === sentence + ' ' || value === sentence + '\n') {
         setUserText('')
-        setLocked(false)
-      }, lockTimeAfterFail)
-    } else if (value === sentence + ' ' || value === sentence + '\n') {
-      setUserText('')
-      onSucceed({
-        strokeCount,
-        state: 'succeed',
-        userText: value,
-        duration: Date.now() - beginningTime,
-      })
+        onSucceed({
+          strokeCount,
+          state: 'succeed',
+          userText: value,
+          duration: Date.now() - beginningTime,
+        })
+      }
     }
   }
 
