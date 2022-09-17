@@ -138,8 +138,10 @@ function TypeBoard({
     }
   }
 
-  const handleUserTextKeyDown = ({ value }: UserSentenceKeyDownEvent) => {
-    if (userText === '' && value === '') {
+  const handleUserTextKeyDown = ({
+    isFirstStroke,
+  }: UserSentenceKeyDownEvent) => {
+    if (isFirstStroke) {
       setBeginningTime(Date.now())
       setStrokeCount(0)
     }

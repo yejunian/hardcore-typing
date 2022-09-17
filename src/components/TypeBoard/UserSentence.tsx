@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import invalidKeys from '../../core/keys/invalidKeys'
 import resetKeys from '../../core/keys/resetKeys'
@@ -26,6 +26,7 @@ export type UserSentenceResetEvent = {
 export type UserSentenceKeyDownEvent = {
   code: string
   value: string
+  isFirstStroke: boolean
 }
 
 function UserSentence({
@@ -36,7 +37,16 @@ function UserSentence({
   onReset,
   onKeyDown,
 }: UserSentenceProps) {
+  const [hasBeenStroked, setHasBeenStroked] = useState(false)
+
+  let lastLocalStroked = hasBeenStroked
   let lastLocalValue = value
+
+  useEffect(() => {
+    if (value === '') {
+      setHasBeenStroked(false)
+    }
+  }, [value])
 
   const handleUserTextInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
     const currentUserText = event.currentTarget.value
@@ -73,7 +83,11 @@ function UserSentence({
         onKeyDown({
           code: event.code,
           value: lastLocalValue,
+          isFirstStroke: !lastLocalStroked,
         })
+
+        lastLocalStroked = true
+        setHasBeenStroked(true)
       }
     }
   }
@@ -81,6 +95,9 @@ function UserSentence({
   const handleUserTextKeyUp = (event: React.KeyboardEvent) => {
     if (enabled && onReset && resetKeys.has(event.code)) {
       onReset({ value: lastLocalValue })
+
+      lastLocalStroked = false
+      setHasBeenStroked(false)
     }
   }
 
