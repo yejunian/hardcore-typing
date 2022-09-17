@@ -46,7 +46,7 @@ function TypeBoard({
 }: TypeBoardProps) {
   const [locked, setLocked] = useState(false)
   const [userText, setUserText] = useState('')
-  const [beginningTime, setBeginningTime] = useState(Date.now())
+  const [beginningTime, setBeginningTime] = useState(Infinity)
   const [strokeCount, setStrokeCount] = useState(0)
 
   const sentence = sentenceEntry.sentence
@@ -56,12 +56,15 @@ function TypeBoard({
 
   useEffect(() => {
     const interval = window.setInterval(() => {
+      const rawDuration = Date.now() - beginningTime
+      const duration = rawDuration >= 0 ? rawDuration : 0
+
       if (userText !== '' && typable) {
         onUpdate({
+          duration,
           strokeCount,
           userText,
           state: 'interval',
-          duration: Date.now() - beginningTime,
         })
       }
     }, refreshInterval)
@@ -74,14 +77,16 @@ function TypeBoard({
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
     const currentWords = tokenizeString(value)
     const lastComparableWordIndex = currentWords.length - 2
+    const rawDuration = Date.now() - beginningTime
+    const duration = rawDuration >= 0 ? rawDuration : 0
 
     setUserText(value)
 
     onUpdate({
+      duration,
       strokeCount,
       state: 'type',
       userText: value,
-      duration: Date.now() - beginningTime,
     })
 
     if (lastComparableWordIndex < 0) {
@@ -103,37 +108,44 @@ function TypeBoard({
       if (!wordEquality || (!lengthCompletion && !separatorEquality)) {
         setLocked(true)
         onFail({
+          duration,
           strokeCount,
           state: 'fail',
           userText: value,
-          duration: Date.now() - beginningTime,
         })
         window.setTimeout(() => {
           setUserText('')
           setLocked(false)
         }, lockTimeAfterFail)
+
+        setBeginningTime(Infinity)
       }
 
       if (value === sentence + ' ' || value === sentence + '\n') {
         setUserText('')
         onSucceed({
+          duration,
           strokeCount,
           state: 'succeed',
           userText: value,
-          duration: Date.now() - beginningTime,
         })
+
+        setBeginningTime(Infinity)
       }
     }
   }
 
   const handleUserTextReset = ({ value }: UserSentenceResetEvent) => {
+    const rawDuration = Date.now() - beginningTime
+    const duration = rawDuration >= 0 ? rawDuration : 0
+
     if (!locked) {
       setUserText('')
       onReset({
-        userText: value,
+        duration,
         strokeCount,
+        userText: value,
         state: 'reset',
-        duration: Date.now() - beginningTime,
       })
     }
   }
