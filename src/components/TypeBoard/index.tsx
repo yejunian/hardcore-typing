@@ -152,10 +152,14 @@ function TypeBoard({
 
   const handleUserTextKeyDown = ({
     isFirstStroke,
+    isForbidden,
   }: UserSentenceKeyDownEvent) => {
     if (isFirstStroke) {
       setBeginningTime(Date.now())
       setStrokeCount(0)
+    } else if (isForbidden) {
+      setStrokeCount(0)
+      return
     }
 
     setStrokeCount((v) => v + 1)

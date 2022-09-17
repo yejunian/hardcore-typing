@@ -6,7 +6,6 @@ const zeroStrokeKeys = new Set([
   // Alphanumeric Section -> Functional keys
   'AltLeft',
   'AltRight',
-  'Backspace',
   'CapsLock',
   'ContextMenu',
   'ControlLeft',
@@ -23,7 +22,6 @@ const zeroStrokeKeys = new Set([
   'NonConvert',
 
   // Control Pad Section
-  'Delete',
   'End',
   'Help',
   'Home',
@@ -39,7 +37,6 @@ const zeroStrokeKeys = new Set([
 
   // Numpad Section
   'NumLock',
-  'NumpadBackspace',
 
   // Function Section
   'Escape',

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
+import forbiddenKeys from '../../core/keys/forbiddenKeys'
 import invalidKeys from '../../core/keys/invalidKeys'
 import resetKeys from '../../core/keys/resetKeys'
 import zeroStrokeKeys from '../../core/keys/zeroStrokeKeys'
@@ -27,6 +28,7 @@ export type UserSentenceKeyDownEvent = {
   code: string
   value: string
   isFirstStroke: boolean
+  isForbidden: boolean
 }
 
 function UserSentence({
@@ -80,14 +82,19 @@ function UserSentence({
         !zeroStrokeKeys.has(event.code) &&
         !isComposingEnter
       ) {
+        const isForbidden = forbiddenKeys.has(event.code)
+
         onKeyDown({
+          isForbidden,
           code: event.code,
           value: lastLocalValue,
           isFirstStroke: !lastLocalStroked,
         })
 
-        lastLocalStroked = true
-        setHasBeenStroked(true)
+        if (!isForbidden) {
+          lastLocalStroked = true
+          setHasBeenStroked(true)
+        }
       }
     }
   }
