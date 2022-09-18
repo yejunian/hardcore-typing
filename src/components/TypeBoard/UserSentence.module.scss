@@ -18,9 +18,13 @@
 
   background-color: #f6f8fc;
 
+  transition: border-color 0.17s, background-color 0.17s;
+
   &.--fail {
     border-color: #a32929;
     background-color: #faebeb;
+
+    animation: headshake 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1;
 
     .sentence:focus {
       outline-color: #a32929;
@@ -65,5 +69,32 @@
         color: #6b727f;
       }
     }
+  }
+}
+
+@keyframes headshake {
+  0% {
+    transform: translateX(0);
+  }
+  10% {
+    transform: translateX(-4px);
+  }
+  20% {
+    transform: translateX(2px * math.sqrt(2));
+  }
+  30% {
+    transform: translateX(-2px);
+  }
+  40% {
+    transform: translateX(1px * math.sqrt(2));
+  }
+  50% {
+    transform: translateX(-1px);
+  }
+  60% {
+    transform: translateX(1px * math.sqrt(0.5));
+  }
+  70% {
+    transform: translateX(0);
   }
 }

@@ -37,7 +37,7 @@ function TypeBoard({
   sentence: sentenceEntry,
   index,
   enabled = true,
-  lockTimeAfterFail = 500,
+  lockTimeAfterFail = 800,
   refreshInterval = 200,
   onSucceed = () => {},
   onFail = () => {},
