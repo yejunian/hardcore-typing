@@ -57,9 +57,12 @@ function StatisticsTable({
               if (typeof originalValue === 'number') {
                 if (typeof fractionDigits === 'number') {
                   const factoredValue = originalValue * (factor ?? 1)
-                  value = factoredValue < 0 || isNaN(factoredValue)
-                    ? '-'
-                    : factoredValue.toFixed(fractionDigits)
+                  value =
+                    factoredValue < 0 ||
+                    isNaN(factoredValue) ||
+                    !isFinite(factoredValue)
+                      ? '-'
+                      : factoredValue.toFixed(fractionDigits)
                 } else {
                   value = originalValue * (factor ?? 1)
                 }
