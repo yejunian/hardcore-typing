@@ -175,6 +175,7 @@ function TypeBoard({
         value={userText}
         autoFocus
         enabled={typable}
+        failed={locked}
         onInput={handleUserTextInput}
         onReset={handleUserTextReset}
         onKeyDown={handleUserTextKeyDown}

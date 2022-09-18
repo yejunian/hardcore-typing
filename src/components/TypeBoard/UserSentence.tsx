@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 
 import forbiddenKeys from '../../core/keys/forbiddenKeys'
@@ -11,6 +12,7 @@ export type UserSentenceProps = {
   value: string
   autoFocus?: boolean
   enabled?: boolean
+  failed?: boolean
   onInput?: (param: UserSentenceInputEvent) => void
   onReset?: (param: UserSentenceResetEvent) => void
   onKeyDown?: (param: UserSentenceKeyDownEvent) => void
@@ -35,6 +37,7 @@ function UserSentence({
   value,
   autoFocus = false,
   enabled = true,
+  failed = false,
   onInput,
   onReset,
   onKeyDown,
@@ -116,7 +119,7 @@ function UserSentence({
   }
 
   return (
-    <section className={styles.root}>
+    <section className={classNames(styles.root, failed && styles['--fail'])}>
       <textarea
         className={styles.sentence}
         autoFocus={autoFocus}

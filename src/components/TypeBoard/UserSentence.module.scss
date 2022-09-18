@@ -18,6 +18,15 @@
 
   background-color: #f6f8fc;
 
+  &.--fail {
+    border-color: #a32929;
+    background-color: #faebeb;
+
+    .sentence:focus {
+      outline-color: #a32929;
+    }
+  }
+
   .sentence {
     $line-height-number: 1.6;
     $padding-y-adjust: math.div(-1 * $font-size * ($line-height-number - 1), 2);
