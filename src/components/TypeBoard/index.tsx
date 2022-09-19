@@ -168,9 +168,11 @@ function TypeBoard({
   return (
     <section className={classNames(className, styles.root)}>
       <GoalSentence
-        {...sentenceEntry}
+        reference={sentenceEntry.reference}
         index={index}
-      />
+      >
+        {sentence}
+      </GoalSentence>
       <UserSentence
         value={userText}
         autoFocus
