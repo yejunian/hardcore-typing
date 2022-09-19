@@ -15,17 +15,11 @@
   border: $border-width solid #0da289;
   border-radius: $border-radius;
   width: 100%;
+  overflow: hidden;
 
   background-color: #f6f8fc;
 
   transition: border-color 0.17s, background-color 0.17s;
-
-  &.--fail {
-    border-color: #a32929;
-    background-color: #faebeb;
-
-    animation: headshake 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1;
-  }
 
   .sentence {
     $line-height-number: 1.6;
@@ -64,6 +58,29 @@
       &::placeholder {
         color: #6b727f;
       }
+    }
+  }
+
+  .ratebar {
+    height: 4px;
+    background-color: #cacdd2;
+
+    .rate {
+      height: 100%;
+      background-color: #0da289;
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+    }
+  }
+
+  &.--fail {
+    border-color: #a32929;
+    background-color: #faebeb;
+
+    animation: headshake 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1;
+
+    .ratebar .rate {
+      background-color: #a32929;
     }
   }
 }

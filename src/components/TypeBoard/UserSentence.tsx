@@ -13,6 +13,7 @@ export type UserSentenceProps = {
   autoFocus?: boolean
   enabled?: boolean
   failed?: boolean
+  rate?: number
   onInput?: (param: UserSentenceInputEvent) => void
   onReset?: (param: UserSentenceResetEvent) => void
   onKeyDown?: (param: UserSentenceKeyDownEvent) => void
@@ -38,6 +39,7 @@ function UserSentence({
   autoFocus = false,
   enabled = true,
   failed = false,
+  rate,
   onInput,
   onReset,
   onKeyDown,
@@ -130,6 +132,15 @@ function UserSentence({
         onKeyUp={handleUserTextKeyUp}
         onClick={handleUserTextClick}
       />
+
+      {typeof rate === 'number' && (
+        <div className={styles.ratebar}>
+          <div
+            className={styles.rate}
+            style={{ transform: `scaleX(${Math.max(Math.min(rate, 1), 0)})` }}
+          />
+        </div>
+      )}
     </section>
   )
 }
