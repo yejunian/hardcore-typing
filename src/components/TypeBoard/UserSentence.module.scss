@@ -12,7 +12,7 @@
   justify-content: flex-start;
 
   box-sizing: border-box;
-  border: $border-width solid #8a909a;
+  border: $border-width solid #0da289;
   border-radius: $border-radius;
   width: 100%;
 
@@ -25,10 +25,6 @@
     background-color: #faebeb;
 
     animation: headshake 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1;
-
-    .sentence:focus {
-      outline-color: #a32929;
-    }
   }
 
   .sentence {
@@ -63,7 +59,7 @@
 
     &:focus {
       color: #000000;
-      outline: $border-width solid #0da289;
+      outline: none;
 
       &::placeholder {
         color: #6b727f;
