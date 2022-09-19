@@ -1,7 +1,9 @@
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 
-import tokenizeString from '../../core/utils/tokenizeSentence'
+import tokenizeString, {
+  SentenceToken,
+} from '../../core/utils/tokenizeSentence'
 import { SentenceEntry } from '../../data/sentences'
 import CommonProps from '../CommonProps'
 
@@ -45,14 +47,49 @@ function TypeBoard({
   onUpdate = () => {},
 }: TypeBoardProps) {
   const [locked, setLocked] = useState(false)
+
   const [userText, setUserText] = useState('')
+  const [userWords, setUserWords] = useState<SentenceToken[]>([])
+
   const [beginningTime, setBeginningTime] = useState(Infinity)
   const [strokeCount, setStrokeCount] = useState(0)
+
+  const typable = enabled && !locked
 
   const sentence = sentenceEntry.sentence
   const words = useMemo(() => tokenizeString(sentence), [sentence])
 
-  const typable = enabled && !locked
+  const highlightedGoalWords = useMemo<React.ReactNode>(() => {
+    let border = userWords.length
+
+    for (let i = 0; i < userWords.length; i += 1) {
+      if (userWords[i].content !== words[i].content) {
+        border = i
+        break
+      }
+    }
+
+    return (
+      <>
+        {words.map(({ content }, index) => {
+          let className: string | undefined
+          if (index < border) {
+            className = styles['--pass']
+          } else if (index === border && locked) {
+            className = styles['--fail']
+          } else {
+            className = undefined
+          }
+
+          return (
+            <span key={index} className={className}>
+              {content}
+            </span>
+          )
+        })}
+      </>
+    )
+  }, [locked, userWords, words])
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -81,6 +118,7 @@ function TypeBoard({
     const duration = rawDuration >= 0 ? rawDuration : 0
 
     setUserText(value)
+    setUserWords(currentWords)
 
     onUpdate({
       duration,
@@ -115,6 +153,7 @@ function TypeBoard({
         })
         window.setTimeout(() => {
           setUserText('')
+          setUserWords([])
           setLocked(false)
         }, lockTimeAfterFail)
 
@@ -123,6 +162,7 @@ function TypeBoard({
 
       if (value === sentence + ' ' || value === sentence + '\n') {
         setUserText('')
+        setUserWords([])
         onSucceed({
           duration,
           strokeCount,
@@ -141,6 +181,7 @@ function TypeBoard({
 
     if (!locked) {
       setUserText('')
+      setUserWords([])
       onReset({
         duration,
         strokeCount,
@@ -167,12 +208,10 @@ function TypeBoard({
 
   return (
     <section className={classNames(className, styles.root)}>
-      <GoalSentence
-        reference={sentenceEntry.reference}
-        index={index}
-      >
-        {sentence}
+      <GoalSentence reference={sentenceEntry.reference} index={index}>
+        {highlightedGoalWords}
       </GoalSentence>
+
       <UserSentence
         value={userText}
         autoFocus
