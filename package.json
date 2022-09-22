@@ -1,6 +1,6 @@
 {
   "name": "hardcore-typing",
-  "version": "0.2.0-dev",
+  "version": "0.2.0",
   "homepage": "https://yejunian.github.io/hardcore-typing/",
   "private": true,
   "dependencies": {
