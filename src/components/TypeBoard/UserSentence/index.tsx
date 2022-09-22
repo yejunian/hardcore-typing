@@ -1,13 +1,14 @@
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 
-import forbiddenKeys from '../../core/keys/forbiddenKeys'
-import invalidKeys from '../../core/keys/invalidKeys'
-import resetKeys from '../../core/keys/resetKeys'
-import unlockKeys from '../../core/keys/unlockKeys'
-import zeroStrokeKeys from '../../core/keys/zeroStrokeKeys'
+import forbiddenKeys from '../../../core/keys/forbiddenKeys'
+import invalidKeys from '../../../core/keys/invalidKeys'
+import resetKeys from '../../../core/keys/resetKeys'
+import unlockKeys from '../../../core/keys/unlockKeys'
+import zeroStrokeKeys from '../../../core/keys/zeroStrokeKeys'
 
-import styles from './UserSentence.module.scss'
+import styles from './index.module.scss'
+import Retry from './Retry'
 
 export type UserSentenceProps = {
   value: string
@@ -163,22 +164,12 @@ function UserSentence({
         </div>
       )}
 
-      <div
-        className={classNames(
-          styles.retry,
-          failed && unlockable && styles['--unlockable']
-        )}
+      <Retry
+        className={styles.retry}
+        failed={failed}
+        unlockable={unlockable}
         onClick={handleRetryClick}
-      >
-        <div className={styles.retryContents}>
-          <div>다시 시도</div>
-          <div className={styles.retryKeys}>
-            <kbd>ESC</kbd>
-            <kbd>Space</kbd>
-            <kbd>Enter</kbd>
-          </div>
-        </div>
-      </div>
+      />
     </section>
   )
 }
