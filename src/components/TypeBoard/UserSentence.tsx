@@ -31,7 +31,6 @@ export type UserSentenceKeyDownEvent = {
   code: string
   value: string
   isFirstStroke: boolean
-  isForbidden: boolean
 }
 
 function UserSentence({
@@ -77,6 +76,15 @@ function UserSentence({
         event.preventDefault()
       }
 
+      if (forbiddenKeys.has(event.code)) {
+        onReset && onReset({ value: lastLocalValue })
+
+        lastLocalStroked = false
+        setHasBeenStroked(false)
+
+        return
+      }
+
       const isComposingEnter =
         (event.code === 'Enter' || event.code === 'NumberEnter') &&
         event.nativeEvent.isComposing
@@ -87,23 +95,17 @@ function UserSentence({
         !zeroStrokeKeys.has(event.code) &&
         !isComposingEnter
       ) {
-        const isForbidden = forbiddenKeys.has(event.code)
-
         onKeyDown({
-          isForbidden,
           code: event.code,
           value: lastLocalValue,
           isFirstStroke: !lastLocalStroked,
         })
 
-        if (!isForbidden) {
-          lastLocalStroked = true
-          setHasBeenStroked(true)
-        }
+        lastLocalStroked = true
+        setHasBeenStroked(true)
       }
     } else if (onKeyDown) {
       onKeyDown({
-        isForbidden: false,
         code: event.code,
         value: lastLocalValue,
         isFirstStroke: false,
