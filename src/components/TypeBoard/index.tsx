@@ -5,6 +5,7 @@ import tokenizeString, {
   SentenceToken,
 } from '../../core/utils/tokenizeSentence'
 import { SentenceEntry } from '../../data/sentences'
+import useDebouncableLock from '../../hooks/useDebouncableLock'
 import CommonProps from '../CommonProps'
 
 import GoalSentence from './GoalSentence'
@@ -20,6 +21,7 @@ export type TypingResult = {
   userText: string
   strokeCount: number
   duration: number
+  isFailureCounted?: boolean
 }
 
 type TypeBoardProps = CommonProps & {
@@ -46,13 +48,21 @@ function TypeBoard({
   onReset = () => {},
   onUpdate = () => {},
 }: TypeBoardProps) {
-  const [locked, setLocked] = useState(false)
-
   const [userText, setUserText] = useState('')
   const [userWords, setUserWords] = useState<SentenceToken[]>([])
 
   const [beginningTime, setBeginningTime] = useState(Infinity)
   const [strokeCount, setStrokeCount] = useState(0)
+
+  const resetUserText = () => {
+    setUserText('')
+    setUserWords([])
+  }
+
+  const [locked, unlockable, lock, unlock] = useDebouncableLock(
+    lockTimeAfterFail,
+    resetUserText
+  )
 
   const typable = enabled && !locked
 
@@ -144,25 +154,19 @@ function TypeBoard({
         currentWords[lastIndex]?.content === words[lastIndex]?.content
 
       if (!wordEquality || (!lengthCompletion && !separatorEquality)) {
-        setLocked(true)
+        lock()
         onFail({
           duration,
           strokeCount,
           state: 'fail',
           userText: value,
         })
-        window.setTimeout(() => {
-          setUserText('')
-          setUserWords([])
-          setLocked(false)
-        }, lockTimeAfterFail)
 
         setBeginningTime(Infinity)
       }
 
       if (value === sentence + ' ' || value === sentence + '\n') {
-        setUserText('')
-        setUserWords([])
+        resetUserText()
         onSucceed({
           duration,
           strokeCount,
@@ -179,14 +183,18 @@ function TypeBoard({
     const rawDuration = Date.now() - beginningTime
     const duration = rawDuration >= 0 ? rawDuration : 0
 
-    if (!locked) {
-      setUserText('')
-      setUserWords([])
+    if (!locked || unlockable) {
+      if (unlockable) {
+        unlock()
+      }
+
+      resetUserText()
       onReset({
         duration,
         strokeCount,
         userText: value,
         state: 'reset',
+        isFailureCounted: locked,
       })
     }
   }
@@ -195,7 +203,10 @@ function TypeBoard({
     isFirstStroke,
     isForbidden,
   }: UserSentenceKeyDownEvent) => {
-    if (isFirstStroke) {
+    if (locked && !unlockable) {
+      lock()
+      return
+    } else if (isFirstStroke) {
       setBeginningTime(Date.now())
       setStrokeCount(0)
     } else if (isForbidden) {

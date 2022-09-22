@@ -101,11 +101,18 @@ function UserSentence({
           setHasBeenStroked(true)
         }
       }
+    } else if (onKeyDown) {
+      onKeyDown({
+        isForbidden: false,
+        code: event.code,
+        value: lastLocalValue,
+        isFirstStroke: false,
+      })
     }
   }
 
   const handleUserTextKeyUp = (event: React.KeyboardEvent) => {
-    if (enabled && onReset && resetKeys.has(event.code)) {
+    if (onReset && resetKeys.has(event.code)) {
       onReset({ value: lastLocalValue })
 
       lastLocalStroked = false
