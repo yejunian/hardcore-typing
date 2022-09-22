@@ -4,5 +4,9 @@
   @return $column-only-width + $gap-only-width;
 }
 
+$font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+  'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+
 $grid-column-gap: 24px;
 $grid-column-width: 80px;
