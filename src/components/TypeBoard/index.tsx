@@ -232,6 +232,7 @@ function TypeBoard({
         autoFocus
         enabled={typable}
         failed={locked}
+        unlockable={unlockable}
         rate={userText.length / (sentence.length || Infinity)}
         onInput={handleUserTextInput}
         onReset={handleUserTextReset}

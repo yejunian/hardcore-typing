@@ -14,6 +14,7 @@ export type UserSentenceProps = {
   autoFocus?: boolean
   enabled?: boolean
   failed?: boolean
+  unlockable?: boolean
   rate?: number
   onInput?: (param: UserSentenceInputEvent) => void
   onReset?: (param: UserSentenceResetEvent) => void
@@ -39,6 +40,7 @@ function UserSentence({
   autoFocus = false,
   enabled = true,
   failed = false,
+  unlockable = false,
   rate,
   onInput,
   onReset,
@@ -132,6 +134,13 @@ function UserSentence({
     event.currentTarget.setSelectionRange(length, length)
   }
 
+  const handleRetryClick = () => {
+    onReset && onReset({ value: lastLocalValue })
+
+    lastLocalStroked = false
+    setHasBeenStroked(false)
+  }
+
   return (
     <section className={classNames(styles.root, failed && styles['--fail'])}>
       <textarea
@@ -153,6 +162,23 @@ function UserSentence({
           />
         </div>
       )}
+
+      <div
+        className={classNames(
+          styles.retry,
+          failed && unlockable && styles['--unlockable']
+        )}
+        onClick={handleRetryClick}
+      >
+        <div className={styles.retryContents}>
+          <div>다시 시도</div>
+          <div className={styles.retryKeys}>
+            <kbd>ESC</kbd>
+            <kbd>Space</kbd>
+            <kbd>Enter</kbd>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
