@@ -43,10 +43,10 @@ function TypeBoard({
   enabled = true,
   lockTimeAfterFail = 800,
   refreshInterval = 200,
-  onSucceed = () => {},
-  onFail = () => {},
-  onReset = () => {},
-  onUpdate = () => {},
+  onSucceed,
+  onFail,
+  onReset,
+  onUpdate,
 }: TypeBoardProps) {
   const [userText, setUserText] = useState('')
   const [userWords, setUserWords] = useState<SentenceToken[]>([])
@@ -106,7 +106,7 @@ function TypeBoard({
       const rawDuration = Date.now() - beginningTime
       const duration = rawDuration >= 0 ? rawDuration : 0
 
-      if (userText !== '' && typable) {
+      if (onUpdate && userText !== '' && typable) {
         onUpdate({
           duration,
           strokeCount,
@@ -130,7 +130,7 @@ function TypeBoard({
     setUserText(value)
     setUserWords(currentWords)
 
-    onUpdate({
+    onUpdate && onUpdate({
       duration,
       strokeCount,
       state: 'type',
@@ -155,7 +155,7 @@ function TypeBoard({
 
       if (!wordEquality || (!lengthCompletion && !separatorEquality)) {
         lock()
-        onFail({
+        onFail && onFail({
           duration,
           strokeCount,
           state: 'fail',
@@ -167,7 +167,7 @@ function TypeBoard({
 
       if (value === sentence + ' ' || value === sentence + '\n') {
         resetUserText()
-        onSucceed({
+        onSucceed && onSucceed({
           duration,
           strokeCount,
           state: 'succeed',
@@ -183,19 +183,27 @@ function TypeBoard({
     const rawDuration = Date.now() - beginningTime
     const duration = rawDuration >= 0 ? rawDuration : 0
 
-    if (!locked || unlockable) {
+    if ((!locked || unlockable) && value.length > 0) {
       if (unlockable) {
         unlock()
-      }
+        resetUserText()
+        onReset && onReset({
+          duration,
+          strokeCount,
+          userText: value,
+          state: 'reset',
+        })
+      } else {
+        lock()
+        onFail && onFail({
+          duration,
+          strokeCount,
+          state: 'fail',
+          userText: value,
+        })
 
-      resetUserText()
-      onReset({
-        duration,
-        strokeCount,
-        userText: value,
-        state: 'reset',
-        isFailureCounted: locked,
-      })
+        setBeginningTime(Infinity)
+      }
     }
   }
 

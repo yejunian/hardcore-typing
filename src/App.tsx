@@ -98,15 +98,6 @@ function App() {
     patchOverallRecord({ failureCount: overallRecord.failureCount + 1 })
   }
 
-  const handleTypeBoardReset = ({
-    userText,
-    isFailureCounted,
-  }: TypingResult) => {
-    if (userText && !isFailureCounted) {
-      handleTypeBoardFail()
-    }
-  }
-
   const handleTypeBoardUpdate = ({
     userText,
     strokeCount,
@@ -130,7 +121,6 @@ function App() {
           index={sentenceIndex}
           onSucceed={handleTypeBoardSucceed}
           onFail={handleTypeBoardFail}
-          onReset={handleTypeBoardReset}
           onUpdate={handleTypeBoardUpdate}
         />
 
