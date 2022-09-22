@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import forbiddenKeys from '../../core/keys/forbiddenKeys'
 import invalidKeys from '../../core/keys/invalidKeys'
 import resetKeys from '../../core/keys/resetKeys'
+import unlockKeys from '../../core/keys/unlockKeys'
 import zeroStrokeKeys from '../../core/keys/zeroStrokeKeys'
 
 import styles from './UserSentence.module.scss'
@@ -114,11 +115,13 @@ function UserSentence({
   }
 
   const handleUserTextKeyUp = (event: React.KeyboardEvent) => {
-    if (onReset && resetKeys.has(event.code)) {
-      onReset({ value: lastLocalValue })
+    if (failed && unlockKeys.has(event.code)) {
+      onReset && onReset({ value: lastLocalValue })
 
       lastLocalStroked = false
       setHasBeenStroked(false)
+    } else if (resetKeys.has(event.code)) {
+      onReset && onReset({ value: lastLocalValue })
     }
   }
 
