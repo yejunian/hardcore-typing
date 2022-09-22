@@ -1,8 +1,6 @@
-@import-normalize;
+@use './global';
 
-$font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-  'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  sans-serif;
+@import-normalize;
 
 html {
   width: 100%;
@@ -16,7 +14,7 @@ body {
   width: 100%;
   height: 100%;
 
-  font-family: $font-family-sans;
+  font-family: global.$font-family-sans;
 
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -32,7 +30,7 @@ body {
 }
 
 input, textarea {
-  font-family: $font-family-sans;
+  font-family: global.$font-family-sans;
 
   word-break: keep-all;
   overflow-wrap: break-word;

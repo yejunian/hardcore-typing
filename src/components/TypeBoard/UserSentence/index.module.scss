@@ -1,0 +1,126 @@
+@use 'sass:math';
+
+.root {
+  $border-radius: 8px;
+  $border-width: 2px;
+  $font-size: 20px;
+  $font-weight: 600;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+
+  box-sizing: border-box;
+  border: $border-width solid #0da289;
+  border-radius: $border-radius;
+  width: 100%;
+  overflow: hidden;
+
+  background-color: #f6f8fc;
+
+  transition: border-color 0.17s, background-color 0.17s;
+
+  .sentence {
+    $line-height-number: 1.6;
+    $padding-y-adjust: math.div(-1 * $font-size * ($line-height-number - 1), 2);
+    $padding-x: 16px;
+    $padding-y: $padding-x + $padding-y-adjust;
+
+    display: block;
+
+    border: none;
+    border-radius: $border-radius - $border-width;
+    padding: $padding-y $padding-x;
+    height: 3 * ($font-size * $line-height-number);
+
+    background: none;
+
+    line-height: $line-height-number;
+    color: #6b727f;
+
+    resize: none;
+
+    font: {
+      size: 20px;
+      weight: 600;
+    };
+
+    &::placeholder {
+      color: #8a909a;
+      opacity: unset;
+    }
+
+    &:focus {
+      color: #000000;
+      outline: none;
+
+      &::placeholder {
+        color: #6b727f;
+      }
+    }
+  }
+
+  .ratebar {
+    height: 4px;
+    background-color: #cacdd2;
+
+    .rate {
+      height: 100%;
+      background-color: #0da289;
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+    }
+  }
+
+  .retry {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+  }
+
+  &.--fail {
+    border-color: #a32929;
+    background-color: #faebeb;
+
+    animation: headshake 1s cubic-bezier(0.445, 0.05, 0.55, 0.95) 1;
+
+    .ratebar .rate {
+      background-color: #a32929;
+    }
+  }
+}
+
+@keyframes headshake {
+  0% {
+    transform: translateX(0);
+  }
+  10% {
+    transform: translateX(-4px);
+  }
+  20% {
+    transform: translateX(2px * math.sqrt(2));
+  }
+  30% {
+    transform: translateX(-2px);
+  }
+  40% {
+    transform: translateX(1px * math.sqrt(2));
+  }
+  50% {
+    transform: translateX(-1px);
+  }
+  60% {
+    transform: translateX(1px * math.sqrt(0.5));
+  }
+  70% {
+    transform: translateX(0);
+  }
+}

@@ -1,7 +1,11 @@
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useState } from 'react'
 
+import tokenizeString, {
+  SentenceToken,
+} from '../../core/utils/tokenizeSentence'
 import { SentenceEntry } from '../../data/sentences'
+import useDebouncableLock from '../../hooks/useDebouncableLock'
 import CommonProps from '../CommonProps'
 
 import GoalSentence from './GoalSentence'
@@ -17,6 +21,7 @@ export type TypingResult = {
   userText: string
   strokeCount: number
   duration: number
+  isFailureCounted?: boolean
 }
 
 type TypeBoardProps = CommonProps & {
@@ -36,31 +41,77 @@ function TypeBoard({
   sentence: sentenceEntry,
   index,
   enabled = true,
-  lockTimeAfterFail = 500,
+  lockTimeAfterFail = 800,
   refreshInterval = 200,
-  onSucceed = () => {},
-  onFail = () => {},
-  onReset = () => {},
-  onUpdate = () => {},
+  onSucceed,
+  onFail,
+  onReset,
+  onUpdate,
 }: TypeBoardProps) {
-  const [locked, setLocked] = useState(false)
   const [userText, setUserText] = useState('')
-  const [beginningTime, setBeginningTime] = useState(Date.now())
+  const [userWords, setUserWords] = useState<SentenceToken[]>([])
+
+  const [beginningTime, setBeginningTime] = useState(Infinity)
   const [strokeCount, setStrokeCount] = useState(0)
 
-  const sentence = sentenceEntry.sentence
-  const words = useMemo(() => sentence.split(/ |\u00b7/), [sentence])
+  const resetUserText = () => {
+    setUserText('')
+    setUserWords([])
+  }
+
+  const [locked, unlockable, lock, unlock] = useDebouncableLock(
+    lockTimeAfterFail,
+    resetUserText
+  )
 
   const typable = enabled && !locked
 
+  const sentence = sentenceEntry.sentence
+  const words = useMemo(() => tokenizeString(sentence), [sentence])
+
+  const highlightedGoalWords = useMemo<React.ReactNode>(() => {
+    let border = userWords.length
+
+    for (let i = 0; i < userWords.length; i += 1) {
+      if (userWords[i].content !== words[i].content) {
+        border = i
+        break
+      }
+    }
+
+    return (
+      <>
+        {words.map(({ content }, index) => {
+          let className: string | undefined
+          if (index < border) {
+            className = styles['--pass']
+          } else if (index === border && locked) {
+            className = styles['--fail']
+          } else {
+            className = undefined
+          }
+
+          return (
+            <span key={index} className={className}>
+              {content}
+            </span>
+          )
+        })}
+      </>
+    )
+  }, [locked, userWords, words])
+
   useEffect(() => {
     const interval = window.setInterval(() => {
-      if (userText !== '' && typable) {
+      const rawDuration = Date.now() - beginningTime
+      const duration = rawDuration >= 0 ? rawDuration : 0
+
+      if (onUpdate && userText !== '' && typable) {
         onUpdate({
+          duration,
           strokeCount,
           userText,
           state: 'interval',
-          duration: Date.now() - beginningTime,
         })
       }
     }, refreshInterval)
@@ -71,61 +122,98 @@ function TypeBoard({
   }, [beginningTime, onUpdate, refreshInterval, strokeCount, typable, userText])
 
   const handleUserTextInput = ({ value }: UserSentenceInputEvent) => {
-    const currentWords = value.split(/ |\u00b7/)
+    const currentWords = tokenizeString(value)
     const lastComparableWordIndex = currentWords.length - 2
+    const rawDuration = Date.now() - beginningTime
+    const duration = rawDuration >= 0 ? rawDuration : 0
 
     setUserText(value)
+    setUserWords(currentWords)
 
-    onUpdate({
+    onUpdate && onUpdate({
+      duration,
       strokeCount,
       state: 'type',
       userText: value,
-      duration: Date.now() - beginningTime,
     })
 
     if (lastComparableWordIndex < 0) {
       return
     }
 
-    const enteredWord = currentWords[lastComparableWordIndex]
-    const expectedWord = words[lastComparableWordIndex]
+    const lastIndex = currentWords.length - 1
 
-    if (enteredWord !== expectedWord) {
-      setLocked(true)
-      onFail({
-        strokeCount,
-        state: 'fail',
-        userText: value,
-        duration: Date.now() - beginningTime,
-      })
-      window.setTimeout(() => {
-        setUserText('')
-        setLocked(false)
-      }, lockTimeAfterFail)
-    } else if (value === sentence + ' ') {
-      setUserText('')
-      onSucceed({
-        strokeCount,
-        state: 'succeed',
-        userText: value,
-        duration: Date.now() - beginningTime,
-      })
+    if (
+      currentWords[lastIndex - 1]?.type === 'word' &&
+      currentWords[lastIndex]?.type === 'separator'
+    ) {
+      const lengthCompletion = words.length < currentWords.length
+      const wordEquality =
+        currentWords[lastIndex - 1]?.content === words[lastIndex - 1]?.content
+      const separatorEquality =
+        currentWords[lastIndex]?.content === words[lastIndex]?.content
+
+      if (!wordEquality || (!lengthCompletion && !separatorEquality)) {
+        lock()
+        onFail && onFail({
+          duration,
+          strokeCount,
+          state: 'fail',
+          userText: value,
+        })
+
+        setBeginningTime(Infinity)
+      }
+
+      if (value === sentence + ' ' || value === sentence + '\n') {
+        resetUserText()
+        onSucceed && onSucceed({
+          duration,
+          strokeCount,
+          state: 'succeed',
+          userText: value,
+        })
+
+        setBeginningTime(Infinity)
+      }
     }
   }
 
   const handleUserTextReset = ({ value }: UserSentenceResetEvent) => {
-    setUserText('')
-    setLocked(false)
-    onReset({
-      userText: value,
-      strokeCount,
-      state: 'reset',
-      duration: Date.now() - beginningTime,
-    })
+    const rawDuration = Date.now() - beginningTime
+    const duration = rawDuration >= 0 ? rawDuration : 0
+
+    if ((!locked || unlockable) && value.length > 0) {
+      if (unlockable) {
+        unlock()
+        resetUserText()
+        onReset && onReset({
+          duration,
+          strokeCount,
+          userText: value,
+          state: 'reset',
+        })
+      } else {
+        lock()
+        onFail && onFail({
+          duration,
+          strokeCount,
+          state: 'fail',
+          userText: value,
+        })
+
+        setBeginningTime(Infinity)
+      }
+    }
   }
 
-  const handleUserTextKeyDown = ({ value }: UserSentenceKeyDownEvent) => {
-    if (userText === '' && value === '') {
+  const handleUserTextKeyDown = ({
+    isFirstStroke,
+  }: UserSentenceKeyDownEvent) => {
+    if (locked && !unlockable) {
+      lock()
+      return
+    } else if (isFirstStroke) {
       setBeginningTime(Date.now())
       setStrokeCount(0)
     }
@@ -135,14 +223,17 @@ function TypeBoard({
 
   return (
     <section className={classNames(className, styles.root)}>
-      <GoalSentence
-        {...sentenceEntry}
-        index={index}
-      />
+      <GoalSentence reference={sentenceEntry.reference} index={index}>
+        {highlightedGoalWords}
+      </GoalSentence>
+
       <UserSentence
         value={userText}
         autoFocus
         enabled={typable}
+        failed={locked}
+        unlockable={unlockable}
+        rate={userText.length / (sentence.length || Infinity)}
         onInput={handleUserTextInput}
         onReset={handleUserTextReset}
         onKeyDown={handleUserTextKeyDown}
